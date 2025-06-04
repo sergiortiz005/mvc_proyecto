@@ -1,62 +1,463 @@
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f4f6f8;
-    margin: 0;
-    padding: 20px;
-}
+ /* Equipos - Diseño Minimalista */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
 
-.container {
-    max-width: 1000px;
-    margin: auto;
-    background-color: #fff;
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.1);
-}
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        min-height: 100vh;
+        color: #333;
+        line-height: 1.6;
+    }
 
-.titulo {
-    text-align: center;
-    margin-bottom: 30px;
-    font-size: 28px;
-    color: #333;
-}
+    .container {
+        max-width: 1200px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+    }
 
-.tabla-equipos {
-    width: 100%;
-    border-collapse: collapse;
-}
+    /* Título principal */
+    .titulo {
+        text-align: center;
+        color: #2c3e50;
+        font-size: 2.5rem;
+        font-weight: 300;
+        margin-bottom: 2rem;
+        position: relative;
+    }
 
-.tabla-equipos th,
-.tabla-equipos td {
-    padding: 12px;
-    text-align: center;
-    border-bottom: 1px solid #ddd;
-}
+    .titulo::after {
+        content: '';
+        display: block;
+        width: 80px;
+        height: 3px;
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        margin: 0.5rem auto;
+        border-radius: 2px;
+    }
 
-.tabla-equipos th {
-    background-color: #1976d2;
-    color: white;
-}
+    /* Botón agregar equipo */
+    .btn.editar:not(.tabla-equipos .btn.editar) {
+        display: inline-block;
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        color: white;
+        text-decoration: none;
+        padding: 1rem 2rem;
+        border-radius: 25px;
+        font-weight: 600;
+        font-size: 1rem;
+        margin-bottom: 2rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(103, 126, 234, 0.3);
+        position: relative;
+        left: 50%;
+        transform: translateX(-50%);
+    }
 
-.tabla-equipos tr:hover {
-    background-color: #f1f1f1;
-}
+    .btn.editar:not(.tabla-equipos .btn.editar):hover {
+        transform: translateX(-50%) translateY(-3px);
+        box-shadow: 0 8px 25px rgba(103, 126, 234, 0.4);
+    }
 
-.btn {
-    padding: 6px 12px;
-    margin: 0 4px;
-    border: none;
-    border-radius: 6px;
-    text-decoration: none;
-    color: white;
-    font-weight: bold;
-    cursor: pointer;
-}
+    .btn.editar:not(.tabla-equipos .btn.editar):before {
+        content: '+ ';
+        font-size: 1.2rem;
+        font-weight: bold;
+    }
 
-.btn.editar {
-    background-color: #0288d1;
-}
+    /* Contenedor de la tabla */
+    .tabla-equipos {
+        width: 100%;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-collapse: collapse;
+    }
 
-.btn.borrar {
-    background-color: #d32f2f;
-}
+    /* Encabezado de la tabla */
+    .tabla-equipos thead {
+        background: linear-gradient(45deg, #667eea, #764ba2);
+    }
+
+    .tabla-equipos thead th {
+        color: white;
+        padding: 1.5rem 1rem;
+        text-align: left;
+        font-weight: 600;
+        font-size: 1rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        border: none;
+        position: relative;
+    }
+
+    .tabla-equipos thead th:not(:last-child)::after {
+        content: '';
+        position: absolute;
+        right: 0;
+        top: 25%;
+        height: 50%;
+        width: 1px;
+        background: rgba(255, 255, 255, 0.2);
+    }
+
+    /* Centrar las columnas de escudo y acciones */
+    .tabla-equipos thead th:nth-child(3),
+    .tabla-equipos thead th:nth-child(4) {
+        text-align: center;
+    }
+
+    /* Filas del cuerpo */
+    .tabla-equipos tbody tr {
+        transition: all 0.3s ease;
+        border-bottom: 1px solid rgba(103, 126, 234, 0.1);
+    }
+
+    .tabla-equipos tbody tr:hover {
+        background: rgba(103, 126, 234, 0.05);
+        transform: scale(1.01);
+        box-shadow: 0 4px 20px rgba(103, 126, 234, 0.1);
+    }
+
+    .tabla-equipos tbody tr:last-child {
+        border-bottom: none;
+    }
+
+    /* Celdas */
+    .tabla-equipos td {
+        padding: 1.2rem 1rem;
+        vertical-align: middle;
+        border: none;
+        font-size: 0.95rem;
+    }
+
+    /* ESTILOS MEJORADOS PARA LOS ENLACES DE EQUIPOS */
+    .enlace-equipo {
+        color: #2c3e50;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 1rem;
+        position: relative;
+        display: inline-block;
+        transition: all 0.3s ease;
+        padding: 0.2rem 0;
+    }
+
+    /* Efecto de subrayado animado */
+    .enlace-equipo::before {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        border-radius: 1px;
+    }
+
+    .enlace-equipo:hover::before {
+        width: 100%;
+    }
+
+    /* Efecto de color en hover */
+    .enlace-equipo:hover {
+        color: #667eea;
+        transform: translateY(-1px);
+    }
+
+    /* Efecto adicional de brillo sutil */
+    .enlace-equipo::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(45deg, transparent, rgba(103, 126, 234, 0.1), transparent);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        border-radius: 4px;
+        z-index: -1;
+    }
+
+    .enlace-equipo:hover::after {
+        opacity: 1;
+    }
+
+    /* Ciudad */
+    .tabla-equipos td:nth-child(2) {
+        color: #718096;
+        font-style: italic;
+    }
+
+    /* Escudos de equipos */
+    .tabla-equipos td:nth-child(3) {
+        text-align: center;
+    }
+
+    .tabla-equipos td img {
+        height: 45px !important;
+        width: 45px;
+        object-fit: contain;
+        border-radius: 50%;
+        padding: 4px;
+        background: rgba(255, 255, 255, 0.9);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        border: 2px solid rgba(103, 126, 234, 0.2);
+    }
+
+    .tabla-equipos td img:hover {
+        transform: scale(1.15) rotate(5deg);
+        box-shadow: 0 8px 25px rgba(103, 126, 234, 0.3);
+        border-color: #667eea;
+    }
+
+    /* MEJORAR ENLACES DE IMÁGENES TAMBIÉN */
+    .tabla-equipos td a:has(img) {
+        display: inline-block;
+        border-radius: 50%;
+        padding: 2px;
+        transition: all 0.3s ease;
+        background: linear-gradient(45deg, transparent, transparent);
+    }
+
+    .tabla-equipos td a:has(img):hover {
+        background: linear-gradient(45deg, rgba(103, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+        transform: scale(1.05);
+    }
+
+    /* Botones de acción en la tabla */
+    .tabla-equipos .btn {
+        display: inline-block;
+        padding: 0.6rem 1.2rem;
+        border-radius: 20px;
+        text-decoration: none;
+        font-weight: 500;
+        font-size: 0.85rem;
+        margin: 0 0.3rem;
+        transition: all 0.3s ease;
+        border: 2px solid transparent;
+        cursor: pointer;
+    }
+
+    .tabla-equipos .btn.editar {
+        background: linear-gradient(45deg, #48bb78, #38a169);
+        color: white;
+        box-shadow: 0 2px 10px rgba(72, 187, 120, 0.3);
+    }
+
+    .tabla-equipos .btn.editar:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(72, 187, 120, 0.4);
+        background: linear-gradient(45deg, #38a169, #2f855a);
+    }
+
+    .tabla-equipos .btn.borrar {
+        background: linear-gradient(45deg, #f56565, #e53e3e);
+        color: white;
+        box-shadow: 0 2px 10px rgba(245, 101, 101, 0.3);
+    }
+
+    .tabla-equipos .btn.borrar:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(245, 101, 101, 0.4);
+        background: linear-gradient(45deg, #e53e3e, #c53030);
+    }
+
+    /* Columna de acciones */
+    .tabla-equipos td:last-child {
+        text-align: center;
+        white-space: nowrap;
+    }
+
+    /* Efectos de carga */
+    .tabla-equipos tbody tr {
+        opacity: 0;
+        animation: fadeInUp 0.6s ease forwards;
+    }
+
+    .tabla-equipos tbody tr:nth-child(1) { animation-delay: 0.1s; }
+    .tabla-equipos tbody tr:nth-child(2) { animation-delay: 0.2s; }
+    .tabla-equipos tbody tr:nth-child(3) { animation-delay: 0.3s; }
+    .tabla-equipos tbody tr:nth-child(4) { animation-delay: 0.4s; }
+    .tabla-equipos tbody tr:nth-child(5) { animation-delay: 0.5s; }
+    .tabla-equipos tbody tr:nth-child(n+6) { animation-delay: 0.6s; }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Efectos especiales para equipos destacados */
+    .tabla-equipos tbody tr.campeon {
+        background: linear-gradient(90deg, rgba(255, 215, 0, 0.1), transparent);
+        border-left: 4px solid #ffd700;
+    }
+
+    .tabla-equipos tbody tr.campeon td:first-child::after {
+        content: ' 🏆';
+        font-size: 1.1rem;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 1024px) {
+        .container {
+            padding: 0 1rem;
+        }
+        
+        .tabla-equipos th,
+        .tabla-equipos td {
+            padding: 1rem 0.8rem;
+        }
+        
+        .tabla-equipos .btn {
+            padding: 0.5rem 1rem;
+            font-size: 0.8rem;
+            margin: 0.2rem;
+        }
+        
+        .tabla-equipos td img {
+            height: 40px !important;
+            width: 40px;
+        }
+        
+        .enlace-equipo {
+            font-size: 0.95rem;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .titulo {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .btn.editar:not(.tabla-equipos .btn.editar) {
+            font-size: 0.9rem;
+            padding: 0.8rem 1.5rem;
+        }
+        
+        .tabla-equipos {
+            border-radius: 15px;
+        }
+        
+        .tabla-equipos th,
+        .tabla-equipos td {
+            padding: 0.8rem 0.6rem;
+            font-size: 0.9rem;
+        }
+        
+        .tabla-equipos thead th {
+            font-size: 0.85rem;
+        }
+        
+        .tabla-equipos td img {
+            height: 35px !important;
+            width: 35px;
+        }
+        
+        .tabla-equipos .btn {
+            display: block;
+            margin: 0.2rem auto;
+            text-align: center;
+            max-width: 80px;
+        }
+        
+        .tabla-equipos td:last-child {
+            padding: 0.5rem;
+        }
+        
+        .enlace-equipo {
+            font-size: 0.9rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .container {
+            margin: 1rem auto;
+        }
+        
+        .titulo {
+            font-size: 1.8rem;
+        }
+        
+        .tabla-equipos th,
+        .tabla-equipos td {
+            padding: 0.6rem 0.4rem;
+            font-size: 0.85rem;
+        }
+        
+        .tabla-equipos thead th {
+            font-size: 0.8rem;
+            padding: 1rem 0.4rem;
+        }
+        
+        .tabla-equipos td img {
+            height: 30px !important;
+            width: 30px;
+        }
+        
+        .tabla-equipos .btn {
+            font-size: 0.75rem;
+            padding: 0.4rem 0.8rem;
+        }
+        
+        .enlace-equipo {
+            font-size: 0.85rem;
+        }
+        
+        /* Ocultar ciudad en móviles muy pequeños si es necesario */
+        .tabla-equipos td:nth-child(2) {
+            display: none;
+        }
+        
+        .tabla-equipos th:nth-child(2) {
+            display: none;
+        }
+    }
+
+    /* Tabla vacía */
+    .tabla-equipos tbody:empty::after {
+        content: 'No hay equipos registrados';
+        display: block;
+        text-align: center;
+        padding: 3rem;
+        color: #718096;
+        font-style: italic;
+        font-size: 1.1rem;
+    }
+
+    /* Efecto de loading para escudos */
+    .tabla-equipos td img {
+        background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+        background-size: 200% 100%;
+        animation: loading 1.5s infinite;
+    }
+
+    .tabla-equipos td img[src] {
+        animation: none;
+        background: rgba(255, 255, 255, 0.9);
+    }
+
+    @keyframes loading {
+        0% {
+            background-position: 200% 0;
+        }
+        100% {
+            background-position: -200% 0;
+        }
+    }

@@ -1,0 +1,282 @@
+/* Mi Cuenta - Diseño Minimalista */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    min-height: 100vh;
+    color: #333;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+/* Título principal */
+h2 {
+    text-align: center;
+    color: #2c3e50;
+    font-size: 2.5rem;
+    font-weight: 300;
+    margin-bottom: 2rem;
+    position: relative;
+}
+
+h2::after {
+    content: '';
+    display: block;
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    margin: 0.5rem auto;
+    border-radius: 2px;
+}
+
+/* Información del usuario */
+.usuario-info {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.usuario-info p {
+    margin-bottom: 1rem;
+    padding: 0.8rem;
+    background: rgba(103, 126, 234, 0.05);
+    border-radius: 10px;
+    border-left: 4px solid #667eea;
+    transition: all 0.3s ease;
+}
+
+.usuario-info p:hover {
+    background: rgba(103, 126, 234, 0.1);
+    transform: translateX(5px);
+}
+
+.usuario-info strong {
+    color: #2c3e50;
+    font-weight: 600;
+    display: inline-block;
+    min-width: 120px;
+}
+
+.usuario-info img {
+    display: block;
+    margin: 1rem auto 0;
+    border-radius: 50%;
+    border: 4px solid #667eea;
+    box-shadow: 0 4px 20px rgba(103, 126, 234, 0.3);
+    transition: transform 0.3s ease;
+}
+
+.usuario-info img:hover {
+    transform: scale(1.05);
+}
+
+/* Separador */
+hr {
+    border: none;
+    height: 2px;
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    margin: 2rem 0;
+    border-radius: 1px;
+    opacity: 0.3;
+}
+
+/* Título de sección */
+h3 {
+    color: #2c3e50;
+    font-size: 1.8rem;
+    font-weight: 400;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+/* Formulario */
+form {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    margin-bottom: 2rem;
+}
+
+label {
+    display: block;
+    color: #2c3e50;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    margin-top: 1rem;
+}
+
+label:first-of-type {
+    margin-top: 0;
+}
+
+input[type="text"],
+input[type="file"] {
+    width: 100%;
+    padding: 1rem;
+    border: 2px solid #e1e8ed;
+    border-radius: 12px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background: rgba(255, 255, 255, 0.8);
+}
+
+input[type="text"]:focus,
+input[type="file"]:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(103, 126, 234, 0.1);
+    background: rgba(255, 255, 255, 1);
+}
+
+input[type="file"] {
+    padding: 0.8rem;
+    cursor: pointer;
+}
+
+input[type="file"]::-webkit-file-upload-button {
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-right: 1rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+input[type="file"]::-webkit-file-upload-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(103, 126, 234, 0.3);
+}
+
+/* Nota informativa */
+form p {
+    color: #718096;
+    font-style: italic;
+    margin: 1rem 0;
+    padding: 1rem;
+    background: rgba(113, 128, 150, 0.1);
+    border-radius: 10px;
+    border-left: 4px solid #718096;
+}
+
+/* Botón submit */
+input[type="submit"] {
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    color: white;
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+    margin-top: 1rem;
+}
+
+input[type="submit"]:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(103, 126, 234, 0.4);
+}
+
+input[type="submit"]:active {
+    transform: translateY(-1px);
+}
+
+/* Enlaces de navegación */
+.container > p {
+    text-align: center;
+    margin: 1rem 0;
+}
+
+.container > p a {
+    color: #667eea;
+    text-decoration: none;
+    font-weight: 500;
+    padding: 0.8rem 1.5rem;
+    border-radius: 25px;
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(103, 126, 234, 0.2);
+    transition: all 0.3s ease;
+    display: inline-block;
+    margin: 0.5rem;
+}
+
+.container > p a:hover {
+    background: rgba(103, 126, 234, 0.1);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(103, 126, 234, 0.2);
+    border-color: #667eea;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        margin: 1rem auto;
+        padding: 0 1rem;
+    }
+    
+    h2 {
+        font-size: 2rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .usuario-info,
+    form {
+        padding: 1.5rem;
+        border-radius: 15px;
+    }
+    
+    .usuario-info strong {
+        min-width: auto;
+        display: block;
+        margin-bottom: 0.2rem;
+    }
+    
+    input[type="text"],
+    input[type="file"],
+    input[type="submit"] {
+        padding: 0.8rem;
+    }
+    
+    .container > p a {
+        display: block;
+        margin: 0.5rem auto;
+        max-width: 200px;
+    }
+}
+
+@media (max-width: 480px) {
+    h2 {
+        font-size: 1.8rem;
+    }
+    
+    .usuario-info,
+    form {
+        padding: 1rem;
+    }
+    
+    .usuario-info p {
+        padding: 0.6rem;
+    }
+}

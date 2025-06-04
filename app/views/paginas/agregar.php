@@ -1,3 +1,12 @@
+<?php
+session_start();
+
+if (!isset($_SESSION['usuario_id']) || $_SESSION['rol'] !== 'admin') {
+    // No autorizado, redirige a la página principal o login
+    header('Location: ' . RUTA_URL . '/usuario/login');
+    exit();
+}
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>

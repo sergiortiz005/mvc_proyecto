@@ -15,7 +15,7 @@ class Core {
 
     // Establecemos controlador, metodo y parametros por defecto
     // En caso de que no venga indicado en la URL
-    protected $controladorActual = 'Equipos';
+    protected $controladorActual = 'principal';
     protected $metodoActual = 'index';
     protected $parametros =[];
 

@@ -1,0 +1,113 @@
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f9fafb;
+    color: #111827;
+}
+
+.header-index {
+    background: linear-gradient(135deg, #111827, #1f2937);
+    color: white;
+    padding: 1.5rem 0;
+}
+
+.container-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+.titulo-liga {
+    font-size: 2rem;
+    margin: 0;
+}
+
+.acciones-usuario a,
+.acciones-usuario span {
+    margin-left: 1rem;
+    color: #f3f4f6;
+    text-decoration: none;
+    font-size: 1rem;
+}
+
+.acciones-usuario a:hover {
+    text-decoration: underline;
+}
+
+.contenido-principal {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+    text-align: center;
+}
+
+.buscador-container {
+    margin-bottom: 2rem;
+    position: relative;
+}
+
+#buscador {
+    width: 100%;
+    padding: 1rem;
+    font-size: 1.2rem;
+    border: 2px solid #d1d5db;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+#resultados {
+    position: absolute;
+    width: 100%;
+    background: white;
+    border: 1px solid #ccc;
+    border-top: none;
+    z-index: 10;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.resultado-item {
+    padding: 0.8rem;
+    cursor: pointer;
+    border-bottom: 1px solid #eee;
+    text-align: left;
+}
+
+.resultado-item:hover {
+    background-color: #f3f4f6;
+}
+
+.mis-ligas h2 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.liga-card {
+    display: inline-block;
+    background-color: #ffffff;
+    border-radius: 15px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    text-align: center;
+}
+
+.liga-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+}
+
+.liga-card img {
+    height: 50px;
+    margin-bottom: 0.5rem;
+}
+
+.liga-card span {
+    display: block;
+    font-size: 1.1rem;
+    font-weight: bold;
+}

@@ -1,0 +1,367 @@
+/* Reset y configuración base */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #f8fafc;
+    min-height: 100vh;
+    padding: 2rem 1rem;
+    color: #1a1a1a;
+}
+
+/* Contenedor principal */
+.container {
+    max-width: 1200px;
+    margin: 2rem auto 0;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    border: 1px solid #e2e8f0;
+}
+
+/* Header */
+.page-header {
+    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+    padding: 2.5rem 2rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.page-header::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="25" cy="25" r="2" fill="%23ffffff" opacity="0.1"/><circle cx="75" cy="25" r="1.5" fill="%23ffffff" opacity="0.1"/><circle cx="25" cy="75" r="1" fill="%23ffffff" opacity="0.1"/><circle cx="75" cy="75" r="2.5" fill="%23ffffff" opacity="0.1"/></svg>');
+    animation: float 20s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% { transform: translate(0, 0) rotate(0deg); }
+    50% { transform: translate(-20px, -20px) rotate(180deg); }
+}
+
+.page-title {
+    font-size: 3rem;
+    font-weight: 800;
+    color: white;
+    margin-bottom: 0.5rem;
+    position: relative;
+    z-index: 1;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.page-subtitle {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 1.1rem;
+    position: relative;
+    z-index: 1;
+}
+
+/* Tabla de clasificación */
+.classification-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    position: relative;
+}
+
+.classification-table thead {
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.classification-table th {
+    padding: 1.25rem 1rem;
+    text-align: center;
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: #374151;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 3px solid #e5e7eb;
+    position: relative;
+}
+
+.classification-table th:first-child {
+    text-align: center;
+    width: 60px;
+}
+
+.classification-table th:nth-child(2) {
+    text-align: left;
+    width: 200px;
+}
+
+/* ARREGLADO: Posiciones especiales - Sin desplazamiento */
+.position-1, .position-2, .position-3 {
+    position: relative;
+}
+
+/* ARREGLADO: Borde de medalla solo en la celda de posición */
+.position-1 td:first-child::before, 
+.position-2 td:first-child::before, 
+.position-3 td:first-child::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    border-radius: 0 2px 2px 0;
+}
+
+.position-1 td:first-child::before {
+    background: linear-gradient(135deg, #ffd700, #ffed4e);
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+}
+
+.position-2 td:first-child::before {
+    background: linear-gradient(135deg, #c0c0c0, #e5e7eb);
+    box-shadow: 0 0 10px rgba(192, 192, 192, 0.5);
+}
+
+.position-3 td:first-child::before {
+    background: linear-gradient(135deg, #cd7f32, #d97706);
+    box-shadow: 0 0 10px rgba(205, 127, 50, 0.5);
+}
+
+.classification-table tbody tr {
+    transition: all 0.3s ease;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.classification-table tbody tr:hover {
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    transform: translateX(5px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.classification-table tbody tr:nth-child(odd) {
+    background: rgba(248, 250, 252, 0.5);
+}
+
+.classification-table td {
+    padding: 1.25rem 1rem;
+    text-align: center;
+    font-size: 0.95rem;
+    color: #374151;
+    border-bottom: 1px solid #f3f4f6;
+    position: relative; /* ARREGLADO: Agregado para el positioning del ::before */
+}
+
+.classification-table td:first-child {
+    font-weight: 700;
+    font-size: 1.1rem;
+    background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+}
+
+.classification-table td:nth-child(2) {
+    text-align: left;
+    font-weight: 600;
+}
+
+/* Enlaces de equipos */
+.team-link {
+    color: #3b82f6;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.team-link:hover {
+    color: #1d4ed8;
+    text-shadow: 0 1px 2px rgba(59, 130, 246, 0.3);
+}
+
+.team-link::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    transition: width 0.3s ease;
+}
+
+.team-link:hover::after {
+    width: 100%;
+}
+
+/* Estadísticas destacadas */
+.stat-wins {
+    background: rgba(34, 197, 94, 0.1);
+    color: #166534;
+    font-weight: 600;
+    border-radius: 6px;
+    padding: 0.25rem 0.5rem;
+}
+
+.stat-points {
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    color: white;
+    font-weight: 700;
+    font-size: 1.1rem;
+    padding: 0.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
+}
+
+.stat-goals-favor {
+    color: #059669;
+    font-weight: 600;
+}
+
+.stat-goals-against {
+    color: #dc2626;
+    font-weight: 600;
+}
+
+.stat-diff-positive {
+    background: rgba(34, 197, 94, 0.1);
+    color: #166534;
+    font-weight: 600;
+    border-radius: 4px;
+    padding: 0.25rem 0.5rem;
+}
+
+.stat-diff-negative {
+    background: rgba(239, 68, 68, 0.1);
+    color: #dc2626;
+    font-weight: 600;
+    border-radius: 4px;
+    padding: 0.25rem 0.5rem;
+}
+
+/* Posiciones destacadas con medallas */
+.position-medal {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    font-weight: 700;
+    font-size: 1rem;
+    position: relative;
+}
+
+.medal-1 {
+    background: linear-gradient(135deg, #ffd700, #ffed4e);
+    color: #92400e;
+    box-shadow: 0 4px 12px rgba(255, 215, 0, 0.4);
+}
+
+.medal-2 {
+    background: linear-gradient(135deg, #c0c0c0, #e5e7eb);
+    color: #374151;
+    box-shadow: 0 4px 12px rgba(192, 192, 192, 0.4);
+}
+
+.medal-3 {
+    background: linear-gradient(135deg, #cd7f32, #d97706);
+    color: white;
+    box-shadow: 0 4px 12px rgba(205, 127, 50, 0.4);
+}
+
+/* Estado sin datos */
+.no-data {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: #64748b;
+    font-size: 1.2rem;
+    background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+}
+
+.no-data::before {
+    content: '🏆';
+    display: block;
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+
+/* Animaciones */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.classification-table tbody tr {
+    animation: slideIn 0.5s ease forwards;
+}
+
+.classification-table tbody tr:nth-child(1) { animation-delay: 0.1s; }
+.classification-table tbody tr:nth-child(2) { animation-delay: 0.2s; }
+.classification-table tbody tr:nth-child(3) { animation-delay: 0.3s; }
+.classification-table tbody tr:nth-child(4) { animation-delay: 0.4s; }
+.classification-table tbody tr:nth-child(5) { animation-delay: 0.5s; }
+
+/* Responsive */
+@media (max-width: 768px) {
+    body {
+        padding: 1rem 0.5rem;
+    }
+    
+    .container {
+        margin-top: 1rem;
+    }
+    
+    .page-title {
+        font-size: 2rem;
+    }
+    
+    .classification-table {
+        font-size: 0.8rem;
+    }
+    
+    .classification-table th,
+    .classification-table td {
+        padding: 0.75rem 0.5rem;
+    }
+    
+    .classification-table th:nth-child(2) {
+        width: 150px;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        margin: 0;
+        border-radius: 0;
+    }
+    
+    .classification-table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+    
+    .classification-table th,
+    .classification-table td {
+        min-width: 60px;
+        padding: 0.5rem 0.25rem;
+    }
+    
+    .page-header {
+        padding: 2rem 1rem;
+    }
+}
