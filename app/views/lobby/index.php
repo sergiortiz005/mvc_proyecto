@@ -49,38 +49,52 @@ session_start();
         </section>
     </main>
 
-    <script>
-        const buscador = document.getElementById('buscador');
-        const resultados = document.getElementById('resultados');
+ <script>
+    const buscador = document.getElementById('buscador');
+    const resultados = document.getElementById('resultados');
 
-        buscador.addEventListener('input', function () {
-            const query = this.value.trim();
+    buscador.addEventListener('input', function () {
+        const query = this.value.trim();
 
-            if (query.length < 2) {
+        if (query.length < 2) {
+            resultados.innerHTML = '';
+            return;
+        }
+
+        // Ruta corregida: busca en Buscar/sugerencias y usa el parámetro 'q'
+        fetch('<?= RUTA_URL ?>/buscar/sugerencias?q=' + encodeURIComponent(query))
+            .then(res => res.json())
+            .then(data => {
                 resultados.innerHTML = '';
-                return;
-            }
 
-            fetch('<?= RUTA_URL ?>/buscar/buscarAjax?termino=' + encodeURIComponent(query))
-                .then(res => res.json())
-                .then(data => {
-                    resultados.innerHTML = '';
-                    data.forEach(item => {
-                        const div = document.createElement('div');
-                        div.className = 'resultado-item';
-                        div.textContent = item.nombre + (item.tipo === 'jugador' ? ' (Jugador)' : ' (Equipo)');
-                        div.onclick = () => {
-                            if (item.tipo === 'jugador') {
-                                window.location.href = '<?= RUTA_URL ?>/jugador/ver/' + item.id;
-                            } else {
-                                window.location.href = '<?= RUTA_URL ?>/equipos/ver/' + item.id;
-                            }
-                        };
-                        resultados.appendChild(div);
-                    });
+                if (data.length === 0) {
+                    resultados.innerHTML = '<div class="resultado-item">Sin resultados</div>';
+                    return;
+                }
+
+                data.forEach(item => {
+                    const div = document.createElement('div');
+                    div.className = 'resultado-item';
+                    div.textContent = item.nombre + (item.tipo === 'jugador' ? ' (Jugador)' : ' (Equipo)');
+
+                    div.onclick = () => {
+                        if (item.tipo === 'jugador') {
+                            window.location.href = '<?= RUTA_URL ?>/jugador/ver/' + item.id;
+                        } else {
+                            window.location.href = '<?= RUTA_URL ?>/equipos/ver/' + item.id;
+                        }
+                    };
+
+                    resultados.appendChild(div);
                 });
-        });
-    </script>
+            })
+            .catch(error => {
+                console.error('Error al buscar:', error);
+                resultados.innerHTML = '<div class="resultado-item">Error al buscar</div>';
+            });
+    });
+</script>
+
 
 </body>
 

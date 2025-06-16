@@ -26,6 +26,14 @@ class Liga
 
         return $this->db->execute();
     }
+    public function existeEquipoConNombre($nombre)
+    {
+        $this->db->query("SELECT id FROM equipos WHERE LOWER(nombre) = LOWER(:nombre)");
+        $this->db->bind(':nombre', $nombre);
+        $this->db->execute();
+        return $this->db->rowCount() > 0;
+    }
+
 
     public function obtenerEquipoPorId($id)
     {

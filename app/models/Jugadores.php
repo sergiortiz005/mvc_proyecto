@@ -56,6 +56,9 @@ class Jugadores
         return $this->db->execute();
     }
 
+
+
+
     public function borrarJugador($id)
     {
         $this->db->query('DELETE FROM jugadores WHERE id = :id');
@@ -104,5 +107,21 @@ class Jugadores
         $this->db->bind(':nombre', "%$nombre%");
         return $this->db->registros();
     }
+    public function existeDorsalEnEquipo($dorsal, $id_equipo, $excluir_id = null)
+    {
+        $sql = "SELECT * FROM jugadores WHERE dorsal = :dorsal AND id_equipo = :id_equipo";
+        if ($excluir_id) {
+            $sql .= " AND id != :excluir_id";
+        }
+        $this->db->query($sql);
+        $this->db->bind(':dorsal', $dorsal);
+        $this->db->bind(':id_equipo', $id_equipo);
+        if ($excluir_id) {
+            $this->db->bind(':excluir_id', $excluir_id);
+        }
+        $fila = $this->db->registro();
+        return $fila ? true : false;
+    }
+
 
 }

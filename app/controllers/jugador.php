@@ -34,20 +34,50 @@ class Jugador extends Controlador
     }
 
     public function actualizar()
-    {
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            $datos = [
-                'id' => $_POST['id'],
-                'nombre' => trim($_POST['nombre']),
-                'dorsal' => (int) $_POST['dorsal'],
-                'posicion' => trim($_POST['posicion']),
-                'id_equipo' => (int) $_POST['id_equipo']
-            ];
+{
+    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+        $id = $_POST['id'];
+        $nombre = trim($_POST['nombre']);
+        $dorsal = trim($_POST['dorsal']);
+        $posicion = trim($_POST['posicion']);
+        $id_equipo = $_POST['id_equipo'];
 
-            $this->jugadorModelo->actualizarJugador($datos);
-            redireccionar('/jugador');
+        $errores = [];
+
+        $this->jugadorModelo = $this->modelo('Jugadores');
+        if ($this->jugadorModelo->existeDorsalEnEquipo($dorsal, $id_equipo, $id)) {
+            $errores['dorsal'] = "Ya existe un jugador con ese dorsal en este equipo.";
         }
+
+        if (!empty($errores)) {
+            $equipos = $this->equipoModelo->obtenerEquipos(); 
+            $datos = [
+                'jugador' => (object)[
+                    'id' => $id,
+                    'nombre' => $nombre,
+                    'dorsal' => $dorsal,
+                    'posicion' => $posicion,
+                    'id_equipo' => $id_equipo
+                ],
+                'equipos' => $equipos,
+                'errores' => $errores
+            ];
+            $this->vista('jugadores/editar', $datos);
+            return;
+        }
+
+        $this->jugadorModelo->actualizarJugador([
+            'id' => $id,
+            'nombre' => $nombre,
+            'dorsal' => $dorsal,
+            'posicion' => $posicion,
+            'id_equipo' => $id_equipo
+        ]);
+
+        redireccionar('/jugador');
     }
+}
+
 
     public function borrar($id)
     {
@@ -69,11 +99,36 @@ class Jugador extends Controlador
     public function guardar()
     {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            $nombre = trim($_POST['nombre']);
+            $dorsal = (int) $_POST['dorsal'];
+            $posicion = trim($_POST['posicion']);
+            $id_equipo = (int) $_POST['id_equipo'];
+            $errores = [];
+
+            // Comprobación de dorsal repetido en el equipo
+            if ($this->jugadorModelo->existeDorsalEnEquipo($dorsal, $id_equipo)) {
+                $errores['dorsal'] = 'Este dorsal ya está asignado en el equipo seleccionado.';
+            }
+
+            if (!empty($errores)) {
+                $equipos = $this->equipoModelo->obtenerEquipos();
+                $datos = [
+                    'errores' => $errores,
+                    'equipos' => $equipos,
+                    'nombre' => $nombre,
+                    'dorsal' => $dorsal,
+                    'posicion' => $posicion,
+                    'id_equipo' => $id_equipo
+                ];
+                $this->vista('jugadores/nuevo', $datos);
+                return;
+            }
+
             $datos = [
-                'nombre' => trim($_POST['nombre']),
-                'dorsal' => (int) $_POST['dorsal'],
-                'posicion' => trim($_POST['posicion']),
-                'id_equipo' => (int) $_POST['id_equipo']
+                'nombre' => $nombre,
+                'dorsal' => $dorsal,
+                'posicion' => $posicion,
+                'id_equipo' => $id_equipo
             ];
 
             $this->jugadorModelo->agregarJugador($datos);
@@ -81,7 +136,8 @@ class Jugador extends Controlador
         }
     }
 
-  public function ver($id)
+
+    public function ver($id)
     {
         $jugador = $this->jugadorModelo->obtenerJugadorPorId($id);
         if (!$jugador) {

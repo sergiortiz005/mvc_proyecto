@@ -6,22 +6,61 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title><?= htmlspecialchars($datos['equipo']->nombre) ?> - Detalle</title>
     <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet">
-        <link rel="stylesheet" href="<?php echo RUTA_URL; ?>/public/css/equipo_detalle.css">
+    <link rel="stylesheet" href="<?php echo RUTA_URL; ?>/public/css/equipo_detalle.css">
 
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/locales/es.global.min.js"></script>
 </head>
 
 <body>
-    
+
     <header>
-        <img src="<?= RUTA_URL . "/public/img/escudos/" . rawurlencode($datos['equipo']->nombre) . ".png" ?>"
-            alt="Escudo de <?= htmlspecialchars($datos['equipo']->nombre) ?>" />
-        <div class="info">
-            <h1><?= htmlspecialchars($datos['equipo']->nombre) ?></h1>
-            <p><?= htmlspecialchars($datos['equipo']->ciudad) ?></p>
+        <div class="header-container">
+            <a href="<?php echo RUTA_URL; ?>/equipos" class="back-button">Volver al listado de equipos</a>
+
+            <div class="header-main">
+                <img src="<?= RUTA_URL . "/public/img/escudos/" . rawurlencode($datos['equipo']->nombre) . ".png" ?>"
+                    alt="Escudo de <?= htmlspecialchars($datos['equipo']->nombre) ?>" class="team-logo">
+
+                <div class="team-info">
+                    <h1 class="team-name"><?= htmlspecialchars($datos['equipo']->nombre) ?></h1>
+                    <p class="team-city"><?= htmlspecialchars($datos['equipo']->ciudad) ?></p>
+
+                    <div class="team-stats">
+                        <?php
+                        // Buscar las estadísticas del equipo en la clasificación
+                        $statsEquipo = null;
+                        foreach ($datos['clasificacion'] as $fila) {
+                            if (isset($fila['equipo_id']) && $fila['equipo_id'] == $datos['equipo']->id) {
+                                $statsEquipo = $fila;
+                                break;
+                            }
+                        }
+
+                        $partidosJugados = $statsEquipo['pj'] ?? 0;
+                        $partidosGanados = $statsEquipo['pg'] ?? 0;
+                        $puntos = $statsEquipo['puntos'] ?? 0;
+                        ?>
+
+                        <div class="stat-item">
+                            <span class="stat-number"><?= $partidosJugados ?></span>
+                            <span class="stat-label">Partidos</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number"><?= $partidosGanados ?></span>
+                            <span class="stat-label">Ganados</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number"><?= $puntos ?></span>
+                            <span class="stat-label">Puntos</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </header>
+
+
 
     <div class="container">
         <div class="main-content">
@@ -96,7 +135,9 @@
                                 <tr>
                                     <td><strong>#<?= htmlspecialchars($jugador->dorsal) ?></strong></td>
                                     <td><?= htmlspecialchars($jugador->nombre) ?></td>
-                                    <td><span style="background: #e5e7eb; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.8rem; font-weight: 500;"><?= htmlspecialchars($jugador->posicion) ?></span></td>
+                                    <td><span
+                                            style="background: #e5e7eb; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.8rem; font-weight: 500;"><?= htmlspecialchars($jugador->posicion) ?></span>
+                                    </td>
                                 </tr>
                             <?php endforeach; ?>
                         </tbody>
@@ -126,7 +167,8 @@
                             <?php foreach ($datos['clasificacion'] as $fila): ?>
                                 <tr>
                                     <td><strong><?= $pos++ ?></strong></td>
-                                    <td><?= htmlspecialchars($fila['nombre'] ?? 'Equipo ' . ($fila['equipo_id'] ?? '-')) ?></td>
+                                    <td><?= htmlspecialchars($fila['nombre'] ?? 'Equipo ' . ($fila['equipo_id'] ?? '-')) ?>
+                                    </td>
                                     <td><?= $fila['pj'] ?? '-' ?></td>
                                     <td><?= $fila['pg'] ?? '-' ?></td>
                                     <td><?= $fila['pe'] ?? '-' ?></td>
@@ -148,18 +190,18 @@
                 <h2>Calendario</h2>
                 <div id="calendario"></div>
             </div>
-            
+
             <div class="next-matches">
                 <h3>Próximos Partidos</h3>
-                <?php 
+                <?php
                 // Mostrar próximos 3 partidos del calendario
                 $proximosPartidos = array_slice($datos['calendario'], 0, 3);
-                foreach ($proximosPartidos as $partido): 
+                foreach ($proximosPartidos as $partido):
                     $esLocal = $partido->id_equipo_local == $datos['equipo']->id;
                     $rival = $esLocal ? $partido->nombre_visitante : $partido->nombre_local;
                     $fecha = date('d/m', strtotime($partido->fecha));
                     $jornada = $partido->jornada ?? '';
-                ?>
+                    ?>
                     <div class="match-item">
                         <div>
                             <div class="match-opponent">J<?= $jornada ?> vs <?= htmlspecialchars($rival) ?></div>
@@ -211,7 +253,7 @@
                         $jornada = $partido->jornada ?? '';
                         $escudo = RUTA_URL . "/public/img/escudos/" . rawurlencode($rival) . ".png";
                         ?>
-                        {
+                            {
                             title: "J<?= $jornada ?> vs <?= htmlspecialchars($rival) ?>",
                             start: "<?= $fecha ?>",
                             display: 'block',
@@ -228,10 +270,10 @@
                     const escudo = info.event.extendedProps.escudo;
                     const rival = info.event.extendedProps.rival;
                     const jornada = info.event.extendedProps.jornada;
-                    
+
                     // Limpiar el contenido del evento
                     info.el.innerHTML = '';
-                    
+
                     if (escudo) {
                         const img = document.createElement('img');
                         img.src = escudo;
@@ -240,7 +282,7 @@
                         info.el.appendChild(img);
                     }
                 },
-                eventClick: function(info) {
+                eventClick: function (info) {
                     info.jsEvent.preventDefault();
                 }
             });

@@ -225,37 +225,73 @@ class Usuario extends Controlador
         $this->vista('usuario/miCuenta', $datos);
     }
 
-    // Procesar actualización de datos en "Mi cuenta"
-    public function actualizarMiCuenta() {
-        if(session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
+public function actualizarMiCuenta() {
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
 
-        if (!isset($_SESSION['usuario_id'])) {
-            header('Location: ' . RUTA_URL . '/usuario/login');
-            exit();
-        }
-
-        $id = $_SESSION['usuario_id'];
-        $nombre = trim($_POST['nombre']);
-        $apellido = trim($_POST['apellido']);
-        $telefono = trim($_POST['telefono']);
-
-        $nombreFoto = null;
-        if (isset($_FILES['foto_perfil']) && $_FILES['foto_perfil']['error'] === 0) {
-            $rutaDestino = RUTA_APP . '/public/img/perfiles/';
-            $nombreFoto = uniqid() . '_' . basename($_FILES['foto_perfil']['name']);
-            move_uploaded_file($_FILES['foto_perfil']['tmp_name'], $rutaDestino . $nombreFoto);
-        }
-
-        $usuarioModel = $this->modelo('Usuarios');
-        $usuarioModel->actualizarDatosUsuario($id, $nombre, $apellido, $telefono, $nombreFoto);
-
-        // Actualiza datos en sesión si quieres
-        $_SESSION['nombre'] = $nombre;
-        $_SESSION['apellido'] = $apellido;
-
-        header('Location: ' . RUTA_URL . '/usuario/miCuenta');
+    if (!isset($_SESSION['usuario_id'])) {
+        header('Location: ' . RUTA_URL . '/usuario/login');
         exit();
     }
+
+    $id = $_SESSION['usuario_id'];
+    $nombre = trim($_POST['nombre']);
+    $apellido = trim($_POST['apellido']);
+    $telefono = trim($_POST['telefono']);
+
+    $errores = [];
+
+    if (empty($telefono)) {
+        $errores['telefono'] = 'El teléfono es obligatorio';
+    } elseif (!preg_match('/^\d{9}$/', $telefono)) {
+        $errores['telefono'] = 'El teléfono debe contener exactamente 9 dígitos numéricos';
+    }
+
+    $nombreFoto = null;
+    if (isset($_FILES['foto_perfil']) && $_FILES['foto_perfil']['error'] === 0) {
+        $extension = strtolower(pathinfo($_FILES['foto_perfil']['name'], PATHINFO_EXTENSION));
+        $extensionesValidas = ['png', 'jpg', 'jpeg'];
+
+        if (!in_array($extension, $extensionesValidas)) {
+            $errores['foto_perfil'] = 'Solo se permiten archivos PNG, JPG y JPEG.';
+        } else {
+            $nombreFoto = uniqid() . '.' . $extension;
+            $rutaDestinoRelativa = 'img/perfiles/' . $nombreFoto;
+            $rutaDestinoAbsoluta = RUTA_APP . '/../public/' . $rutaDestinoRelativa;
+
+            if (!move_uploaded_file($_FILES['foto_perfil']['tmp_name'], $rutaDestinoAbsoluta)) {
+                $errores['foto_perfil'] = 'Error al subir la imagen.';
+            }
+        }
+    }
+
+    $usuarioModel = $this->modelo('Usuarios');
+
+    if (!empty($errores)) {
+        $usuario = $usuarioModel->getUsuarioPorId($id);
+
+        $datos = [
+            'usuario' => $usuario,
+            'nombre' => $nombre,
+            'apellido' => $apellido,
+            'telefono' => $telefono,
+            'errores' => $errores
+        ];
+
+        $this->vista('usuario/miCuenta', $datos);
+        return;
+    }
+
+    $usuarioModel->actualizarDatosUsuario($id, $nombre, $apellido, $telefono, $nombreFoto);
+
+    $_SESSION['nombre'] = $nombre;
+    $_SESSION['apellido'] = $apellido;
+
+    header('Location: ' . RUTA_URL . '/usuario/miCuenta');
+    exit();
+}
+
+
+
 }
