@@ -26,12 +26,21 @@ class Liga
 
         return $this->db->execute();
     }
-    public function existeEquipoConNombre($nombre)
+    public function existeEquipoConNombreDistinto($nombre, $idActual)
     {
-        $this->db->query("SELECT id FROM equipos WHERE LOWER(nombre) = LOWER(:nombre)");
+        $this->db->query("SELECT id FROM equipos WHERE LOWER(nombre) = LOWER(:nombre) AND id != :id");
         $this->db->bind(':nombre', $nombre);
+        $this->db->bind(':id', $idActual);
         $this->db->execute();
         return $this->db->rowCount() > 0;
+    }
+
+    public function existeNombreEquipo($nombre)
+    {
+        $this->db->query('SELECT COUNT(*) as total FROM equipos WHERE nombre = :nombre');
+        $this->db->bind(':nombre', $nombre);
+        $fila = $this->db->registro(); 
+        return $fila->total > 0;
     }
 
 
@@ -52,17 +61,17 @@ class Liga
     public function actualizarEquipo($datos)
     {
         $this->db->query("UPDATE equipos SET nombre = :nombre, ciudad = :ciudad, escudo = :escudo WHERE id = :id");
-        $this->db->bind(':id', $datos['id']);
         $this->db->bind(':nombre', $datos['nombre']);
         $this->db->bind(':ciudad', $datos['ciudad']);
         $this->db->bind(':escudo', $datos['escudo']);
-
+        $this->db->bind(':id', $datos['id']);
         return $this->db->execute();
     }
+
     public function obtenerClasificacion()
     {
         $this->db->query("SELECT * FROM partidos WHERE goles_local IS NOT NULL AND goles_visitante IS NOT NULL");
-        $partidos = $this->db->registros(); // Esto devuelve objetos stdClass
+        $partidos = $this->db->registros();
 
         $clasificacion = [];
 
@@ -152,6 +161,7 @@ class Liga
         $this->db->bind(':id', $id);
         return $this->db->registro();
     }
+
 
     public function obtenerResultadosPorEquipo($id_equipo)
     {

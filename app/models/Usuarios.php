@@ -103,22 +103,38 @@ class Usuarios
     }
 
     public function actualizarDatosUsuario($id, $nombre, $apellido, $telefono, $foto_perfil = null)
-{
-    if ($foto_perfil) {
-        $this->db->query("UPDATE usuarios SET nombre = :nombre, apellido = :apellido, telefono = :telefono, foto_perfil = :foto_perfil WHERE id = :id");
-        $this->db->bind(':foto_perfil', 'img/perfiles/' . $foto_perfil);
-    } else {
-        $this->db->query("UPDATE usuarios SET nombre = :nombre, apellido = :apellido, telefono = :telefono WHERE id = :id");
+    {
+        if ($foto_perfil) {
+            $this->db->query("UPDATE usuarios SET nombre = :nombre, apellido = :apellido, telefono = :telefono, foto_perfil = :foto_perfil WHERE id = :id");
+            $this->db->bind(':foto_perfil', 'img/perfiles/' . $foto_perfil);
+        } else {
+            $this->db->query("UPDATE usuarios SET nombre = :nombre, apellido = :apellido, telefono = :telefono WHERE id = :id");
+        }
+
+        $this->db->bind(':nombre', $nombre);
+        $this->db->bind(':apellido', $apellido);
+        $this->db->bind(':telefono', $telefono);
+        $this->db->bind(':id', $id);
+
+        $this->db->execute();
     }
 
-    $this->db->bind(':nombre', $nombre);
-    $this->db->bind(':apellido', $apellido);
-    $this->db->bind(':telefono', $telefono);
-    $this->db->bind(':id', $id);
+    public function actualizarContrasena($id, $nuevaContrasena)
+    {
+        $this->db->query("UPDATE usuarios SET contrasena = :contrasena WHERE id = :id");
+        $this->db->bind(':contrasena', $nuevaContrasena);
+        $this->db->bind(':id', $id);
 
-    $this->db->execute();
-}
+        return $this->db->execute();
+    }
 
 
+    public function obtenerUsuarioPorId($id)
+    {
+        $this->db->query("SELECT * FROM usuarios WHERE id = :id");
+        $this->db->bind(':id', $id);
+
+        return $this->db->registro();
+    }
 
 }

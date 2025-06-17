@@ -19,82 +19,67 @@ class equipos extends Controlador
 
     public function nuevo()
     {
-        $datos = [
-            'nombre' => '',
-            'ciudad' => '',
-            'errores' => []
-        ];
-        $this->vista('paginas/agregar', $datos);
+        $this->vista('paginas/agregar');
     }
 
     public function guardar()
     {
-        if ($_SERVER['REQUEST_METHOD'] != 'POST') {
-            redireccionar('/equipos/nuevo');
-            return;
-        }
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            $nombre = trim($_POST['nombre']);
+            $ciudad = trim($_POST['ciudad']);
+            $rutaDestino = null;
 
-        $nombre = trim($_POST['nombre']);
-        $ciudad = trim($_POST['ciudad']);
-        $rutaDestino = null;
-        $errores = [];
-
-        if (empty($nombre)) {
-            $errores['nombre'] = 'El nombre del equipo es obligatorio.';
-        } else {
-            if ($this->equipoModelo->existeEquipoConNombre($nombre)) {
-                $errores['nombre'] = 'Ya existe un equipo con ese nombre.';
-            }
-        }
-
-        if (!empty($_FILES['escudo']['name'])) {
-            $extension = strtolower(pathinfo($_FILES['escudo']['name'], PATHINFO_EXTENSION));
-            $extensionesValidas = ['png', 'jpg', 'jpeg'];
-
-            if (!in_array($extension, $extensionesValidas)) {
-                $errores['escudo'] = 'Solo se permiten imágenes PNG, JPG o JPEG.';
-            }
-        }
-
-        if (!empty($errores)) {
-            $datos = [
-                'nombre' => $nombre,
-                'ciudad' => $ciudad,
-                'errores' => $errores
-            ];
-            $this->vista('paginas/agregar', $datos);
-            return;
-        }
-
-        if (!empty($_FILES['escudo']['name'])) {
-            $nombreEscudo = $nombre . '.' . $extension;
-            $rutaTemporal = $_FILES['escudo']['tmp_name'];
-            $rutaDestinoRelativa = 'img/escudos/' . $nombreEscudo;
-            $rutaDestinoAbsoluta = RUTA_APP . '/../public/' . $rutaDestinoRelativa;
-
-            if (!move_uploaded_file($rutaTemporal, $rutaDestinoAbsoluta)) {
-                $errores['escudo'] = 'Error al subir el archivo.';
+            if ($this->equipoModelo->existeNombreEquipo($nombre)) {
                 $datos = [
+                    'error' => 'El nombre del equipo ya existe. Por favor, elige otro.',
                     'nombre' => $nombre,
-                    'ciudad' => $ciudad,
-                    'errores' => $errores
+                    'ciudad' => $ciudad
                 ];
                 $this->vista('paginas/agregar', $datos);
                 return;
             }
 
-            $rutaDestino = $rutaDestinoRelativa;
+            if (!empty($_FILES['escudo']['name'])) {
+                $extension = strtolower(pathinfo($_FILES['escudo']['name'], PATHINFO_EXTENSION));
+                $nombreEscudo = $nombre . '.' . $extension;
+                $rutaTemporal = $_FILES['escudo']['tmp_name'];
+                $rutaDestinoRelativa = 'img/escudos/' . $nombreEscudo;
+                $rutaDestinoAbsoluta = RUTA_APP . '/../public/' . $rutaDestinoRelativa;
+
+                $extensionesValidas = ['png', 'jpg', 'jpeg'];
+                if (!in_array($extension, $extensionesValidas)) {
+                    $datos = [
+                        'error' => 'Extensión no permitida. Solo PNG, JPG y JPEG.',
+                        'nombre' => $nombre,
+                        'ciudad' => $ciudad
+                    ];
+                    $this->vista('paginas/agregar', $datos);
+                    return;
+                }
+
+                if (!move_uploaded_file($rutaTemporal, $rutaDestinoAbsoluta)) {
+                    $datos = [
+                        'error' => 'Error al subir el archivo.',
+                        'nombre' => $nombre,
+                        'ciudad' => $ciudad
+                    ];
+                    $this->vista('paginas/agregar', $datos);
+                    return;
+                }
+
+                $rutaDestino = $rutaDestinoRelativa;
+            }
+
+            $datosEquipo = [
+                'nombre' => $nombre,
+                'ciudad' => $ciudad,
+                'escudo' => $nombreEscudo
+            ];
+
+            $this->equipoModelo->agregarEquipo($datosEquipo);
+
+            redireccionar('/equipos');
         }
-
-        $datos = [
-            'nombre' => $nombre,
-            'ciudad' => $ciudad,
-            'escudo' => $rutaDestino
-        ];
-
-        $this->equipoModelo->agregarEquipo($datos);
-
-        redireccionar('/equipos');
     }
 
     public function borrar($id)
@@ -124,42 +109,81 @@ class equipos extends Controlador
             redireccionar('/equipos');
         }
     }
-    public function actualizar()
+    public function actualizar($id)
     {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            $id = $_POST['id'];
-            $nombre = trim($_POST['nombre']);
-            $ciudad = trim($_POST['ciudad']);
+            $equipoOriginal = $this->equipoModelo->getEquipoById($id);
 
-            $equipoActual = $this->equipoModelo->obtenerEquipoPorId($id);
-            $rutaDestino = $equipoActual->escudo;
-
-            if (!empty($_FILES['escudo']['name'])) {
-                $extension = strtolower(pathinfo($_FILES['escudo']['name'], PATHINFO_EXTENSION));
-                $nombreEscudo = $nombre . '.' . $extension;
-                $rutaTemporal = $_FILES['escudo']['tmp_name'];
-                $rutaRelativa = 'img/escudos/' . $nombreEscudo;
-                $rutaAbsoluta = RUTA_APP . '/../public/' . $rutaRelativa;
-
-                if (file_exists(RUTA_APP . '/../public/' . $rutaDestino)) {
-                    unlink(RUTA_APP . '/../public/' . $rutaDestino);
-                }
-
-                move_uploaded_file($rutaTemporal, $rutaAbsoluta);
-                $rutaDestino = $rutaRelativa;
+            if (!$equipoOriginal) {
+                die('Equipo no encontrado.');
             }
 
-            $datos = [
-                'id' => $id,
-                'nombre' => $nombre,
-                'ciudad' => $ciudad,
-                'escudo' => $rutaDestino
-            ];
+            $nombreNuevo = trim($_POST['nombre']);
+            $ciudad = trim($_POST['ciudad']);
+            $nombreEscudo = $equipoOriginal->escudo;
 
-            $this->equipoModelo->actualizarEquipo($datos);
-            redireccionar('/equipos');
+            $rutaEscudos = RUTA_APP . '/../public/img/escudos/';
+
+            if (empty($nombreNuevo) || empty($ciudad)) {
+                $datos = [
+                    'equipo' => $equipoOriginal,
+                    'error' => 'Faltan campos obligatorios.'
+                ];
+                return $this->vista('paginas/editar_equipo', $datos);
+            }
+
+            if ($this->equipoModelo->existeEquipoConNombreDistinto($nombreNuevo, $id)) {
+                $datos = [
+                    'equipo' => $equipoOriginal,
+                    'error' => 'El nombre del equipo ya existe. Elige otro.'
+                ];
+                return $this->vista('paginas/editar_equipo', $datos);
+            }
+
+            if (!empty($_FILES['escudo']['name'])) {
+                $archivoTmp = $_FILES['escudo']['tmp_name'];
+                $nombreArchivo = basename($_FILES['escudo']['name']);
+                $rutaDestino = $rutaEscudos . $nombreArchivo;
+
+                if (move_uploaded_file($archivoTmp, $rutaDestino)) {
+                    $nombreEscudo = $nombreArchivo;
+                }
+            } elseif (!empty($nombreEscudo) && $nombreNuevo !== $equipoOriginal->nombre) {
+                $extension = pathinfo($nombreEscudo, PATHINFO_EXTENSION);
+                $nuevoNombreEscudo = $nombreNuevo . '.' . $extension;
+
+                $rutaActual = $rutaEscudos . $nombreEscudo;
+                $rutaNueva = $rutaEscudos . $nuevoNombreEscudo;
+
+                if (file_exists($rutaActual)) {
+                    if (rename($rutaActual, $rutaNueva)) {
+                        $nombreEscudo = $nuevoNombreEscudo;
+                    } else {
+                        echo "No se pudo renombrar el archivo. Verifica permisos.";
+                    }
+                }
+            }
+
+            $this->equipoModelo->actualizarEquipo([
+                'id' => $id,
+                'nombre' => $nombreNuevo,
+                'ciudad' => $ciudad,
+                'escudo' => $nombreEscudo
+            ]);
+
+            redireccionar('/equipos/ver/' . $id);
+        } else {
+            $equipo = $this->equipoModelo->getEquipoById($id);
+            if (!$equipo) {
+                die('Equipo no encontrado');
+            }
+            $datos = [
+                'equipo' => $equipo
+            ];
+            $this->vista('equipos/editar_equipo', $datos);
         }
     }
+
 
     public function obtenerClasificacion()
     {

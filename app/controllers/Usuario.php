@@ -127,7 +127,7 @@ class Usuario extends Controlador
             $usuarioAutenticado = $this->usuarioModelo->login($usuario, $contrasena);
 
             if ($usuarioAutenticado) {
-                if(session_status() === PHP_SESSION_NONE) {
+                if (session_status() === PHP_SESSION_NONE) {
                     session_start();
                 }
                 $_SESSION['usuario_id'] = $usuarioAutenticado->id;
@@ -152,7 +152,7 @@ class Usuario extends Controlador
     // Cerrar sesión
     public function logout()
     {
-        if(session_status() === PHP_SESSION_NONE) {
+        if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
         $_SESSION = [];
@@ -163,7 +163,7 @@ class Usuario extends Controlador
     // Página de administración para mostrar usuarios y buscar por email
     public function admin()
     {
-        if(session_status() === PHP_SESSION_NONE) {
+        if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
         // Podrías añadir validación de rol admin aquí si quieres
@@ -198,8 +198,9 @@ class Usuario extends Controlador
     }
 
     // Mostrar página "Mi cuenta" con datos del usuario logueado
-    public function miCuenta() {
-        if(session_status() === PHP_SESSION_NONE) {
+    public function miCuenta()
+    {
+        if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
 
@@ -210,7 +211,7 @@ class Usuario extends Controlador
 
         $id = $_SESSION['usuario_id'];
 
-        $usuarioModel = $this->modelo('Usuarios'); 
+        $usuarioModel = $this->modelo('Usuarios');
         $usuario = $usuarioModel->getUsuarioPorId($id);
 
         if (!$usuario) {
@@ -225,7 +226,75 @@ class Usuario extends Controlador
         $this->vista('usuario/miCuenta', $datos);
     }
 
-public function actualizarMiCuenta() {
+    public function actualizarMiCuenta()
+    {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        if (!isset($_SESSION['usuario_id'])) {
+            header('Location: ' . RUTA_URL . '/usuario/login');
+            exit();
+        }
+
+        $id = $_SESSION['usuario_id'];
+        $nombre = trim($_POST['nombre']);
+        $apellido = trim($_POST['apellido']);
+        $telefono = trim($_POST['telefono']);
+
+        $errores = [];
+
+        if (empty($telefono)) {
+            $errores['telefono'] = 'El teléfono es obligatorio';
+        } elseif (!preg_match('/^\d{9}$/', $telefono)) {
+            $errores['telefono'] = 'El teléfono debe contener exactamente 9 dígitos numéricos';
+        }
+
+        $nombreFoto = null;
+        if (isset($_FILES['foto_perfil']) && $_FILES['foto_perfil']['error'] === 0) {
+            $extension = strtolower(pathinfo($_FILES['foto_perfil']['name'], PATHINFO_EXTENSION));
+            $extensionesValidas = ['png', 'jpg', 'jpeg'];
+
+            if (!in_array($extension, $extensionesValidas)) {
+                $errores['foto_perfil'] = 'Solo se permiten archivos PNG, JPG y JPEG.';
+            } else {
+                $nombreFoto = uniqid() . '.' . $extension;
+                $rutaDestinoRelativa = 'img/perfiles/' . $nombreFoto;
+                $rutaDestinoAbsoluta = RUTA_APP . '/../public/' . $rutaDestinoRelativa;
+
+                if (!move_uploaded_file($_FILES['foto_perfil']['tmp_name'], $rutaDestinoAbsoluta)) {
+                    $errores['foto_perfil'] = 'Error al subir la imagen.';
+                }
+            }
+        }
+
+        $usuarioModel = $this->modelo('Usuarios');
+
+        if (!empty($errores)) {
+            $usuario = $usuarioModel->getUsuarioPorId($id);
+
+            $datos = [
+                'usuario' => $usuario,
+                'nombre' => $nombre,
+                'apellido' => $apellido,
+                'telefono' => $telefono,
+                'errores' => $errores
+            ];
+
+            $this->vista('usuario/miCuenta', $datos);
+            return;
+        }
+
+        $usuarioModel->actualizarDatosUsuario($id, $nombre, $apellido, $telefono, $nombreFoto);
+
+        $_SESSION['nombre'] = $nombre;
+        $_SESSION['apellido'] = $apellido;
+
+        header('Location: ' . RUTA_URL . '/usuario/miCuenta');
+        exit();
+    }
+    public function cambiarContrasena()
+{
     if (session_status() === PHP_SESSION_NONE) {
         session_start();
     }
@@ -235,61 +304,58 @@ public function actualizarMiCuenta() {
         exit();
     }
 
-    $id = $_SESSION['usuario_id'];
-    $nombre = trim($_POST['nombre']);
-    $apellido = trim($_POST['apellido']);
-    $telefono = trim($_POST['telefono']);
+    $usuario = $this->usuarioModelo->obtenerUsuarioPorId($_SESSION['usuario_id']);
 
-    $errores = [];
-
-    if (empty($telefono)) {
-        $errores['telefono'] = 'El teléfono es obligatorio';
-    } elseif (!preg_match('/^\d{9}$/', $telefono)) {
-        $errores['telefono'] = 'El teléfono debe contener exactamente 9 dígitos numéricos';
+    if (!$usuario) {
+        die('Usuario no encontrado');
     }
 
-    $nombreFoto = null;
-    if (isset($_FILES['foto_perfil']) && $_FILES['foto_perfil']['error'] === 0) {
-        $extension = strtolower(pathinfo($_FILES['foto_perfil']['name'], PATHINFO_EXTENSION));
-        $extensionesValidas = ['png', 'jpg', 'jpeg'];
-
-        if (!in_array($extension, $extensionesValidas)) {
-            $errores['foto_perfil'] = 'Solo se permiten archivos PNG, JPG y JPEG.';
-        } else {
-            $nombreFoto = uniqid() . '.' . $extension;
-            $rutaDestinoRelativa = 'img/perfiles/' . $nombreFoto;
-            $rutaDestinoAbsoluta = RUTA_APP . '/../public/' . $rutaDestinoRelativa;
-
-            if (!move_uploaded_file($_FILES['foto_perfil']['tmp_name'], $rutaDestinoAbsoluta)) {
-                $errores['foto_perfil'] = 'Error al subir la imagen.';
-            }
-        }
-    }
-
-    $usuarioModel = $this->modelo('Usuarios');
-
-    if (!empty($errores)) {
-        $usuario = $usuarioModel->getUsuarioPorId($id);
+    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+        $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
 
         $datos = [
-            'usuario' => $usuario,
-            'nombre' => $nombre,
-            'apellido' => $apellido,
-            'telefono' => $telefono,
-            'errores' => $errores
+            'contrasena_actual' => trim($_POST['contrasena_actual']),
+            'nueva_contrasena' => trim($_POST['nueva_contrasena']),
+            'confirmar_contrasena' => trim($_POST['confirmar_contrasena']),
+            'errores' => []
         ];
 
-        $this->vista('usuario/miCuenta', $datos);
-        return;
+        // Verificar contraseña actual
+        if (!password_verify($datos['contrasena_actual'], $usuario->contrasena)) {
+            $datos['errores']['contrasena_actual'] = 'La contraseña actual es incorrecta.';
+        }
+
+        // Comprobar si la nueva es igual a la actual
+        if (password_verify($datos['nueva_contrasena'], $usuario->contrasena)) {
+            $datos['errores']['nueva_contrasena'] = 'La nueva contraseña no puede ser igual a la actual.';
+        }
+
+        // Verificar que coincidan
+        if ($datos['nueva_contrasena'] !== $datos['confirmar_contrasena']) {
+            $datos['errores']['confirmar_contrasena'] = 'Las contraseñas no coinciden.';
+        }
+
+        if (empty($datos['errores'])) {
+            $nuevaContrasenaHash = password_hash($datos['nueva_contrasena'], PASSWORD_DEFAULT);
+
+            if ($this->usuarioModelo->actualizarContrasena($usuario->id, $nuevaContrasenaHash)) {
+                redireccionar('/usuario/miCuenta');
+            } else {
+                die('Error al actualizar la contraseña.');
+            }
+        } else {
+            $this->vista('usuario/cambiarContrasena', $datos);
+        }
+    } else {
+        $datos = [
+            'contrasena_actual' => '',
+            'nueva_contrasena' => '',
+            'confirmar_contrasena' => '',
+            'errores' => []
+        ];
+
+        $this->vista('usuario/cambiarContrasena', $datos);
     }
-
-    $usuarioModel->actualizarDatosUsuario($id, $nombre, $apellido, $telefono, $nombreFoto);
-
-    $_SESSION['nombre'] = $nombre;
-    $_SESSION['apellido'] = $apellido;
-
-    header('Location: ' . RUTA_URL . '/usuario/miCuenta');
-    exit();
 }
 
 

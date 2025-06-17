@@ -105,7 +105,6 @@ class Jugador extends Controlador
             $id_equipo = (int) $_POST['id_equipo'];
             $errores = [];
 
-            // Comprobación de dorsal repetido en el equipo
             if ($this->jugadorModelo->existeDorsalEnEquipo($dorsal, $id_equipo)) {
                 $errores['dorsal'] = 'Este dorsal ya está asignado en el equipo seleccionado.';
             }

@@ -1,3 +1,12 @@
+<?php
+session_start();
+
+if (!isset($_SESSION['usuario_id']) || $_SESSION['rol'] !== 'admin') {
+    // No autorizado, redirige a la página principal o login
+    header('Location: ' . RUTA_URL . '/usuario/login');
+    exit();
+}
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -9,12 +18,8 @@
     <div class="container">
         <h1>Crear Nuevo Equipo</h1>
 
-        <?php if (!empty($datos['errores']['nombre'])): ?>
-            <p style="color:red;"><?php echo $datos['errores']['nombre']; ?></p>
-        <?php endif; ?>
-
-        <?php if (!empty($datos['errores']['escudo'])): ?>
-            <p style="color:red;"><?php echo $datos['errores']['escudo']; ?></p>
+        <?php if (!empty($datos['error'])): ?>
+            <p style="color: red;"><?php echo $datos['error']; ?></p>
         <?php endif; ?>
 
         <form action="<?php echo RUTA_URL; ?>/equipos/guardar" method="POST" enctype="multipart/form-data">
